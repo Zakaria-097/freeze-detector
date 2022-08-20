@@ -1,5 +1,6 @@
 # Importing all necessary libraries 
 import cv2 
+import sys
 import os 
 from PIL import Image
 import imagehash
@@ -7,14 +8,14 @@ import numpy as np
 import collections 
 import os, shutil
 import webbrowser
-from tkinter import filedialog # needed to allow users to select video 
-import itertools
+from tkinter import filedialog #allow users to select video 
+import art 
+from PIL import Image
 
 try:
-
     # creating a folder named data 
-    if not os.path.exists('Zaks_frames_scan'): 
-        os.makedirs('Zaks_frames_scan')
+    if not os.path.exists('frames'): 
+        os.makedirs('frames')
     # if not created then raise error
 except OSError: 
     print ('Error: Creating directory of data') 
@@ -33,7 +34,7 @@ def automationFunction():
 
 
     #remove stuff in data directory if stuff already in there
-    folder = 'Zaks_frames_scan'
+    folder = 'frames'
     for filename in os.listdir(folder):
         file_path = os.path.join(folder, filename)
 
@@ -46,21 +47,11 @@ def automationFunction():
             print('Failed to delete %s. Reason: %s' % (file_path, e))
 
 
-
-    #remove stuff in our text file if stuff already there
-    f = open('testing.txt', 'r+')
-    f.truncate(0)
-    f.close()
-
-    f2 = open('testing2.txt', 'r+')
-    f2.truncate(0)
-    f2.close()
-
-    f3 = open('timestamped_frames.txt', 'r+')
-    f3.truncate(0)
-    f3.close()
-
-
+    #clear previous entries
+    with open('hashes.txt', 'r+') as tes, \
+        open('results.txt', 'r+') as tes2, \
+        open('timestamped_frames.txt', 'r+') as tes3: tes.truncate(0), tes2.truncate(0), tes3.truncate(0)
+        
 
     selected_fileName = filedialog.askopenfilename( filetypes = ( ("Video Files", "*.mp4"), ("All Files", "*.*") ))
 
@@ -82,18 +73,18 @@ def automationFunction():
             count = count + fps + fps + fps
 
             # if video is still left continue creating images 
-            frame_name = './Zaks_frames_scan/frame' + str(count) + '.jpg'
+            frame_name = './frames/frame' + str(count) + '.jpg'
 
             # writing the extracted images
             cv2.imwrite(frame_name, frame)
 
-            #hashing each frame
+            #hashing each .openframe
             zaks_Hash = imagehash.phash(Image.open(frame_name))
 
             print("   Scanning ->" + str(frame_name) + " = " + str(zaks_Hash))
 
             #open text file
-            file1 = open("testing.txt","a")
+            file1 = open("hashes.txt","a")
             sss = str(zaks_Hash)
             file1.write("\n" + sss)
             file1.close()
@@ -122,36 +113,38 @@ def automationFunction():
             break
 
     def scanningCompleted():
-        print ("\n" + "   Scanning 100% Complete " + "\n")  
+        print ("\n" + "   Scanning 100% Complete ")  
 
     def openResults():
-        #after result is written to testing2.txt -> open them so the user can see the reult 
+        #after result is written to results.txt -> open them so the user can see the result 
         webbrowser.open("timestamped_frames.txt")
-        webbrowser.open("testing2.txt")
+        webbrowser.open("results.txt")
 
     def noDupsFound():
         #write to results txt file that no dups found
-        file20 = open("testing2.txt","a")
+        file20 = open("results.txt","a")
         file20.write( "\n" + "   Scanning Complete:"  + "\n" + "\n" + "   No Freeze Found! ")
         file20.close()
+        
         #spit out the result to inform the user
-        webbrowser.open("testing2.txt")
+        print("\n   No Freeze Found!")
+        exitMessage()
 
 
-    testing_file = open('testing.txt')
+    testing_file = open('hashes.txt')
     #this skips the first 81 lines in the txt file - 81 lines = 4 minutes
     lines = testing_file.readlines()[72:]
     testing_file.close()
 
-    #duplicate testing in testing.txt
-    with open('testing.txt') as infile:
+    #duplicate testing in hashes.txt
+    with open('hashes.txt') as infile:
  
         counts = collections.Counter(l.strip() for l in lines)
         variable_test = 0
 
     for line, counts in counts.most_common():
 
-        file2 = open("testing2.txt","a")
+        file2 = open("results.txt","a")
 
         if (counts > 3):
 
@@ -175,25 +168,10 @@ def automationFunction():
 
     exit_program()
 
-    
 
+art.tprint("\nFreeze Detector")
 
-
-text = "Freeze Detector"
-from PIL import Image, ImageDraw, ImageFont
-import numpy as np
-myfont = ImageFont.truetype("verdanab.ttf", 12)
-size = myfont.getsize(text)
-img = Image.new("1",size,"black")
-draw = ImageDraw.Draw(img)
-draw.text((0, 0), text, "white", font=myfont)
-pixels = np.array(img, dtype=np.uint8)
-chars = np.array([' ','#'], dtype="U1")[pixels]
-strings = chars.view('U' + str(chars.shape[1])).flatten()
-print( "\n".join(strings))
-
-
-print ("\n" + "\n" + "\n" + "      Welcome to 'Freeze Detector' Developed by SmartOdds Ltd")
+print ("      Welcome to 'Freeze Detector' Developed by SmartOdds Ltd")
 print ("\n" + "      This program was developed by Zakaria for the SAT's Team")
 
 def aboutSection():
@@ -201,20 +179,20 @@ def aboutSection():
     print ( "         This program was developed to check for freezes & pauses within a given video file")
 
 
+def exitMessage():
+    userInput = input("\n\n"  +  "  Thank you for using this service :) Press any key to quit." )
 
 def askUser():
 
-    userInput = input("\n"  +  "      Enter 'start' To Continue: " )
+    userInput = input("\n"  +  "      Enter 'start' To Scan Your File: " )
 
     if (userInput == "about"):
         aboutSection()
 
-
     if (userInput == "start" or userInput=="start " or userInput=="START" or userInput=="START " or userInput=="Start" or userInput=="Start "):
         automationFunction()
 
-    if (userInput =="exit" or userInput =="exit " or userInput=="EXIT" or userInput =="quit"):
-        import sys
+    if (userInput =="e" or userInput =="exit " or userInput=="EXIT" or userInput =="quit"): 
         sys.exit()
 
     if(userInput != "start" and userInput!="start " and userInput!="START" and userInput!="START " and userInput!="Start" and userInput!="Start " and userInput !="exit"):
