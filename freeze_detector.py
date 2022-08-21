@@ -16,12 +16,18 @@ try:
     # creating a folder named data 
     if not os.path.exists('frames'): 
         os.makedirs('frames')
+    if not os.path.exists('results.txt'):
+        os.mknod('results.txt')
+    if not os.path.exists('hashes.txt'):
+        os.mknod('hashes.txt')
+    if not os.path.exists('timestamped_frames.txt'):
+        os.mknod('timestamped_frames.txt')
     # if not created then raise error
 except OSError: 
     print ('Error: Creating directory of data') 
 
 
-def automationFunction():
+def start():
 
     def exit_program():
         import sys
@@ -32,8 +38,7 @@ def automationFunction():
     counter_id = 0
     goneThroughScan = 0
 
-
-    #remove stuff in data directory if stuff already in there
+    #remove items in frames directory if stuff already in there
     folder = 'frames'
     for filename in os.listdir(folder):
         file_path = os.path.join(folder, filename)
@@ -61,7 +66,6 @@ def automationFunction():
     while cap.isOpened():
         ret, frame = cap.read()
 
-
         if ret: 
             minutes = counter_id // 60
             hours = minutes // 60
@@ -81,23 +85,21 @@ def automationFunction():
             #hashing each .openframe
             zaks_Hash = imagehash.phash(Image.open(frame_name))
 
-            print("   Scanning ->" + str(frame_name) + " = " + str(zaks_Hash))
+            print("   Scanning ->" + str(zaks_Hash))
 
             #open text file
             file1 = open("hashes.txt","a")
-            sss = str(zaks_Hash)
-            file1.write("\n" + sss)
+            file1.write("\n" + str(zaks_Hash))
             file1.close()
 
             file3 = open("timestamped_frames.txt","a")
             sofn = frame_name.split('/')[2:]
             string_of_frame_name = str(sofn)
-            # counter_id_str = str(counter_id)
 
-            file3.write("\n" + current_time_of_video + " " +  string_of_frame_name + " = " + sss)
+            file3.write("\n" + current_time_of_video + " " +  string_of_frame_name + " = " + str(zaks_Hash))
             file3.close()
 
-            #iterate over each 3 seconds in the video / used for hashes_with_frames.txt
+            #iterate over each 3 seconds in the video / used for timestamped_frames.txt
             counter_id = counter_id + 3
 
             goneThroughScan = 1
@@ -111,10 +113,7 @@ def automationFunction():
         else: 
             cap.release()
             break
-
-    def scanningCompleted():
-        print ("\n" + "   Scanning 100% Complete ")  
-
+        
     def openResults():
         #after result is written to results.txt -> open them so the user can see the result 
         webbrowser.open("timestamped_frames.txt")
@@ -130,15 +129,13 @@ def automationFunction():
         print("\n   No Freeze Found!")
         exitMessage()
 
-
+    # unnecessary optimization step - this skips the first 81 lines in the txt file - 81 lines = 4 minutes
     testing_file = open('hashes.txt')
-    #this skips the first 81 lines in the txt file - 81 lines = 4 minutes
     lines = testing_file.readlines()[72:]
     testing_file.close()
 
-    #duplicate testing in hashes.txt
+    #determine if there exists 3 consecutive hashes that are the same in hashes.txt
     with open('hashes.txt') as infile:
- 
         counts = collections.Counter(l.strip() for l in lines)
         variable_test = 0
 
@@ -149,18 +146,16 @@ def automationFunction():
         if (counts > 3):
 
             variable_test = 1
-            string_count = str(counts)
-            print ( "\n"+"   Hash:  " + line + "           duplicates: " + string_count)
-            file2.write("\n""   Hash:  " + line + "           duplicates: " + string_count)
+            print ( "\n"+"   Hash:  " + line + "           duplicates: " + str(counts))
+            file2.write("\n""   Hash:  " + line + "           duplicates: " + str(counts))
             file2.close()
 
-
+    print ("\n" + "   Scanning 100% Complete ")  
+    
     if (variable_test == 1 and goneThroughScan == 1): 
-        scanningCompleted()
         openResults()
                         
     if (variable_test == 0 and goneThroughScan == 1): 
-        scanningCompleted()
         noDupsFound()
         
     # Release all space and windows once done 
@@ -174,28 +169,18 @@ art.tprint("\nFreeze Detector")
 print ("      Welcome to 'Freeze Detector' Developed by SmartOdds Ltd")
 print ("\n" + "      This program was developed by Zakaria for the SAT's Team")
 
-def aboutSection():
-    print ("\n" + "\n" + "         Welcome to Freeze Detector ")
-    print ( "         This program was developed to check for freezes & pauses within a given video file")
-
-
 def exitMessage():
-    userInput = input("\n\n"  +  "  Thank you for using this service :) Press any key to quit." )
+    userInput = input("\n\n"  +  "  Thank you for using this service :) Press enter to quit." )
 
 def askUser():
 
-    userInput = input("\n"  +  "      Enter 'start' To Scan Your File: " )
+    userInput = input("\n"  +  "      Enter 's' To Scan Your File: " )
 
-    if (userInput == "about"):
-        aboutSection()
+    target = ["s", "S"]
 
-    if (userInput == "start" or userInput=="start " or userInput=="START" or userInput=="START " or userInput=="Start" or userInput=="Start "):
-        automationFunction()
-
-    if (userInput =="e" or userInput =="exit " or userInput=="EXIT" or userInput =="quit"): 
-        sys.exit()
-
-    if(userInput != "start" and userInput!="start " and userInput!="START" and userInput!="START " and userInput!="Start" and userInput!="Start " and userInput !="exit"):
+    if (userInput in target):
+        start()
+    else:
         askUser()
 
 askUser()
