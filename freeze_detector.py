@@ -126,8 +126,7 @@ def start():
         file20.close()
         
         #spit out the result to inform the user
-        print("\n   No Freeze Found!")
-        exitMessage()
+        webbrowser.open("results.txt")
 
     # unnecessary optimization step - this skips the first 81 lines in the txt file - 81 lines = 4 minutes
     testing_file = open('hashes.txt')
@@ -138,6 +137,8 @@ def start():
     with open('hashes.txt') as infile:
         counts = collections.Counter(l.strip() for l in lines)
         variable_test = 0
+        
+    print ("\n" + "   Scanning 100% Complete ")  
 
     for line, counts in counts.most_common():
 
@@ -146,11 +147,8 @@ def start():
         if (counts > 3):
 
             variable_test = 1
-            print ( "\n"+"   Hash:  " + line + "           duplicates: " + str(counts))
             file2.write("\n""   Hash:  " + line + "           duplicates: " + str(counts))
             file2.close()
-
-    print ("\n" + "   Scanning 100% Complete ")  
     
     if (variable_test == 1 and goneThroughScan == 1): 
         openResults()
@@ -168,9 +166,6 @@ art.tprint("\nFreeze Detector")
 
 print ("      Welcome to 'Freeze Detector' Developed by SmartOdds Ltd")
 print ("\n" + "      This program was developed by Zakaria for the SAT's Team")
-
-def exitMessage():
-    userInput = input("\n\n"  +  "  Thank you for using this service :) Press enter to quit." )
 
 def askUser():
 
