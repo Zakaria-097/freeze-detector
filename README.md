@@ -2,8 +2,21 @@
 
 A simple video file scanner, that can determine if there's any freezes anywhere in a given video, as well as the exact time of the freeze.
 
-## Build executable
- 
+### Prerequisites
+
+* You need Python3. Install it here. [Python3](https://www.python.org/downloads/windows/)
+* You need PIP. It should come with Python3. Verify you have it with;
+
 ```bash
-pyinstaller -D -F -n main -c freeze_detector.py
+pip -V
+```
+
+### Install the dependencies by running the following;
+
+```bash
+pip install ImageHash && \
+pip install art && \
+pip install opencv_python  && \
+pip install numpy && \
+pip install Pillow
 ```

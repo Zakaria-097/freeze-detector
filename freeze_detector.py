@@ -4,10 +4,10 @@ import sys
 import os 
 from PIL import Image
 import imagehash
-import numpy as np
 import collections 
 import os, shutil
 import webbrowser
+import tkinter
 from tkinter import filedialog #allow users to select video 
 import art 
 from PIL import Image

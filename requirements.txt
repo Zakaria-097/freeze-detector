@@ -1,0 +1,5 @@
+art==5.7
+ImageHash==4.2.1
+numpy==1.21.3
+opencv_python==4.5.3.56
+Pillow==9.2.0
