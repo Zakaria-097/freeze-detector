@@ -27,6 +27,22 @@ except OSError:
     print ('Error: Creating directory of data') 
 
 
+def dupsFound(hash, currentTime):
+
+    file = open("results.txt", "a")
+    file.write("\n""   Duplicate Hash:  " + hash + "      Time: " + str(currentTime[0]))
+    file.close()
+
+    webbrowser.open("results.txt")
+    
+def noDupsFound():
+    
+    file20 = open("results.txt","a")
+    file20.write( "\n" + "   Scanning Complete:"  + "\n" + "\n" + "   No Freeze Found! ")
+    file20.close()
+
+    webbrowser.open("results.txt")
+
 def start():
 
     def exit_program():
@@ -68,14 +84,7 @@ def start():
     # list of the times in video duplicate hash was found
     timeOfDup= []
 
-    def dupsFound(file, hash, currentTime):
 
-        file.write("\n""   Hash:  " + hash + "      starting time: " + str(currentTime))
-        file.close()
-
-        #after result is written to results.txt -> open them so the user can see the result 
-        webbrowser.open("timestamped_frames.txt")
-        webbrowser.open("results.txt")
 
     while cap.isOpened():
         ret, frame = cap.read()
@@ -132,10 +141,8 @@ def start():
                 else:
                     timeOfDup[:] = []
 
-            resFile = open("results.txt", "a")
-
             if hashCount == 4:
-                dupsFound(resFile, str(zaks_Hash), timeOfDup)
+                dupsFound(str(zaks_Hash), timeOfDup)
  
             #break while scanning if user presses 'q'
             if cv2.waitKey(1) & 0xFF == ord('q'):
@@ -148,16 +155,10 @@ def start():
     # Release all space and windows once done 
     cv2.destroyAllWindows()
 
-    if hashCount == 1:
+    if hashCount < 3:
 
-        #write to results txt file that no dups found
-        file20 = open("results.txt","a")
-        file20.write( "\n" + "   Scanning Complete:"  + "\n" + "\n" + "   No Freeze Found! ")
-        file20.close()
-    
-        #spit out the result to inform the user
-        webbrowser.open("results.txt")
-
+        noDupsFound()
+        
     exit_program()
 
 
