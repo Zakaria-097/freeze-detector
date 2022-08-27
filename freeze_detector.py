@@ -1,4 +1,5 @@
 # Importing all necessary libraries 
+from stat import filemode
 import cv2 
 import sys
 import os 
@@ -45,16 +46,17 @@ def clearPreviousEntries():
     with open('hashes.txt', 'r+') as tes, \
         open('results.txt', 'r+') as tes2, \
         open('timestamped_frames.txt', 'r+') as tes3: tes.truncate(0), tes3.write("initialise"), tes2.truncate(0), tes3.truncate(0)
-                
-def exit_program():
-    import sys
-    sys.exit()
+     
+def writeToFile(fileName, fileMode, message):
+    file = open(fileName, fileMode)
+    file.write(message)
+    file.close()
+     
         
 def duplicatesFound(hash, currentTime):
 
-    file = open("results.txt", "a")
-    file.write("\n" + "   Freeze found!" + "\n\n""   Duplicate Hash:  " + hash + "      Time: " + str(currentTime[0]))
-    file.close()
+    message = "\n" + "   Freeze found!" + "\n\n""   Duplicate Hash:  " + hash + "      Time: " + str(currentTime[0])
+    writeToFile("results.txt", "a", message)
 
     webbrowser.open("results.txt")
     
@@ -78,15 +80,13 @@ def start():
     count = 0
     counter_id = 0
     hashCount = 1
-    timeOfDup= [] # list the exact times we've found duplicate hashes 
+    timeOfDup= [] # timeOfDup: used to list the exact times we've found duplicate hashes 
     
     # allow user to select a video file
     selected_fileName = filedialog.askopenfilename( filetypes = ( ("Video Files", "*.mp4"), ("All Files", "*.*") ))
 
     # read video from specified path 
     cap = cv2.VideoCapture(selected_fileName) 
-
-
 
 
     while cap.isOpened():
@@ -111,6 +111,7 @@ def start():
             #hashing each .openframe
             zaks_Hash = imagehash.phash(Image.open(frame_name))
 
+            # log the current frame
             print("   Scanning ->" + str(zaks_Hash))
 
             #open text file
@@ -162,7 +163,7 @@ def start():
 
         noDuplicatesFound()
         
-    exit_program()
+    sys.exit()
 
 
 art.tprint("\nFreeze Detector")
