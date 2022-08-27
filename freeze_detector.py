@@ -51,23 +51,7 @@ def writeToFile(fileName, fileMode, message):
     file = open(fileName, fileMode)
     file.write(message)
     file.close()
-     
-        
-def duplicatesFound(hash, currentTime):
-
-    message = "\n" + "   Freeze found!" + "\n\n""   Duplicate Hash:  " + hash + "      Time: " + str(currentTime[0])
-    writeToFile("results.txt", "a", message)
-
-    webbrowser.open("results.txt")
-    
-def noDuplicatesFound():
-    
-    file20 = open("results.txt","a")
-    file20.write( "\n" + "   Scanning Complete:"  + "\n" + "\n" + "   No Freeze Found! ")
-    file20.close()
-
-    webbrowser.open("results.txt")
-
+          
 def start():
 
     # generate necessary files
@@ -87,7 +71,6 @@ def start():
 
     # read video from specified path 
     cap = cv2.VideoCapture(selected_fileName) 
-
 
     while cap.isOpened():
         ret, frame = cap.read()
@@ -114,23 +97,20 @@ def start():
             # log the current frame
             print("   Scanning ->" + str(zaks_Hash))
 
-            #open text file
-            file1 = open("hashes.txt","a")
-            file1.write("\n" + str(zaks_Hash))
-            file1.close()
-
-            file3 = open("timestamped_frames.txt","a")
+            # write the hashes
+            writeToFile("hashes.txt","a", "\n" + str(zaks_Hash))
+            
             sofn = frame_name.split('/')[2:]
-            string_of_frame_name = str(sofn)
 
-            file3.write("\n" + current_time_of_video + " " +  string_of_frame_name + " = " + str(zaks_Hash))
-            file3.close()
+            # write to timestamped_frames
+            writeToFile("timestamped_frames.txt","a", "\n" + current_time_of_video + " " +  str(sofn) + " = " + str(zaks_Hash))
 
-            # iterate over each 3 seconds in the video / used for timestamped_frames.txt
+            # update the counter / used for timestamped_frames.txt
             counter_id = counter_id + 3
 
             cap.set(1, count)
 
+            # populate timeOfDup with the current time.
             timeOfDup.append(str(current_time_of_video))
 
             # compare current hash to previous hash
@@ -145,8 +125,10 @@ def start():
                 else:
                     timeOfDup[:] = []
 
+            # freezes found! 
             if hashCount == 4:
-                duplicatesFound(str(zaks_Hash), timeOfDup)
+                
+                writeToFile("results.txt", "a", "\n" + "   Freeze found!" + "\n\n""   Duplicate Hash:  " + str(hash) + "      Time: " + str(timeOfDup[0]))
  
             #break while scanning if user presses 'q'
             if cv2.waitKey(1) & 0xFF == ord('q'):
@@ -156,20 +138,21 @@ def start():
             cap.release()
             break
 
-    # Release all space and windows once done 
+    # release all space and windows once done 
     cv2.destroyAllWindows()
 
-    if hashCount < 3:
-
-        noDuplicatesFound()
+    # no freezes found!
+    if hashCount <= 3:
+        writeToFile("results.txt", "a", "\n" + "   Scanning Complete:"  + "\n" + "\n" + "   No Freeze Found! ")
         
+    webbrowser.open("results.txt")
     sys.exit()
 
 
 art.tprint("\nFreeze Detector")
 
 print ("      Welcome to 'Freeze Detector' Developed Zakaria-097")
-print ("\n" + "      This program is a simple scanner to detect freezes in your video files.")
+print ("\n" + "      This application is a simple scanner to detect freezes in your video files.")
 
 def askUser():
 
