@@ -68,7 +68,7 @@ def showResults():
 def startProgam():
     
     # create folder to store the video frames
-    generateFrameFolder
+    generateFrameFolder()
     
     # create all the necessary files
     generateFiles()
