@@ -1,5 +1,4 @@
 # Importing all necessary libraries 
-from stat import filemode
 import cv2 
 import sys
 import os 
@@ -8,7 +7,7 @@ import imagehash
 import collections 
 import os, shutil
 import webbrowser
-from tkinter import filedialog #allow users to select video 
+from tkinter import filedialog
 import art 
 from PIL import Image
 
@@ -17,27 +16,37 @@ def introMsg():
     print ("      Welcome to 'Freeze Detector' Developed Zakaria-097")
     print ("\n" + "      This application is a simple scanner to detect freezes in your video files.")
 
-def generateFiles():
-    
-    try:
-        if not os.path.exists('frames'): 
-            os.makedirs('frames')
-        if not os.path.exists('results.txt'):
-            os.mknod('results.txt')
-        if not os.path.exists('hashes.txt'):
-            os.mknod('hashes.txt')
-        if not os.path.exists('timestamped_frames.txt'):
-            os.mknod('timestamped_frames.txt')
 
+def generateFrameFolder():
+    
+    folder = 'frames'
+    try:
+        if not os.path.exists(folder): 
+            os.makedirs(folder)
+        else:
+            clearPreviousEntries()
     except OSError: 
         print ('Error: Creating directory of data') 
+
+def generateFiles():
+    
+    files = ['results.txt', 'hashes.txt', 'timestamped_frames.txt']
+
+    for file in files:
+        try:
+            if not os.path.exists(file):
+                os.mknod(file)
+            else:
+                with open(file, "r+") as openFile: openFile.truncate(0)                    
+        except OSError:
+            print("Error: generating files")
+    
       
 def clearPreviousEntries():
     
     folder = 'frames'
     for filename in os.listdir(folder):
         file_path = os.path.join(folder, filename)
-
         try:
             if os.path.isfile(file_path) or os.path.islink(file_path):
                 os.unlink(file_path)
@@ -46,9 +55,6 @@ def clearPreviousEntries():
         except Exception as e:
             print('Failed to delete %s. Reason: %s' % (file_path, e))
             
-    with open('hashes.txt', 'r+') as tes, \
-        open('results.txt', 'r+') as tes2, \
-        open('timestamped_frames.txt', 'r+') as tes3: tes.truncate(0), tes3.write("initialise"), tes2.truncate(0), tes3.truncate(0)
      
 def writeToFile(fileName, fileMode, message):
     file = open(fileName, fileMode)
@@ -60,8 +66,11 @@ def showResults():
     sys.exit()
           
 def startProgam():
-
-    # generate necessary files
+    
+    # create folder to store the video frames
+    generateFrameFolder
+    
+    # create all the necessary files
     generateFiles()
     
     # clear data from previous scan
