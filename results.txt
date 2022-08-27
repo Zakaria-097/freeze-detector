@@ -1,4 +1,4 @@
 
-   Freeze found!
+   Scanning Complete:
 
-   Duplicate Hash:  <built-in function hash>      Time: 00:00:03
+   No Freeze Found! 

@@ -12,8 +12,11 @@ from tkinter import filedialog #allow users to select video
 import art 
 from PIL import Image
 
+def introMsg():
+    art.tprint("\nFreeze Detector")
+    print ("      Welcome to 'Freeze Detector' Developed Zakaria-097")
+    print ("\n" + "      This application is a simple scanner to detect freezes in your video files.")
 
-# generate directory 'frames' and all necessary files 
 def generateFiles():
     
     try:
@@ -51,8 +54,12 @@ def writeToFile(fileName, fileMode, message):
     file = open(fileName, fileMode)
     file.write(message)
     file.close()
+    
+def showResults():
+    webbrowser.open("results.txt")
+    sys.exit()
           
-def start():
+def startProgam():
 
     # generate necessary files
     generateFiles()
@@ -110,10 +117,10 @@ def start():
 
             cap.set(1, count)
 
-            # populate timeOfDup with the current time.
+            # populate timeOfDup with the current time. 
             timeOfDup.append(str(current_time_of_video))
 
-            # compare current hash to previous hash
+            # compare current hash value to the previous hash value
             with open('hashes.txt') as infile:
 
                 lines = infile.read().splitlines()
@@ -129,6 +136,7 @@ def start():
             if hashCount == 4:
                 
                 writeToFile("results.txt", "a", "\n" + "   Freeze found!" + "\n\n""   Duplicate Hash:  " + str(hash) + "      Time: " + str(timeOfDup[0]))
+                showResults()
  
             #break while scanning if user presses 'q'
             if cv2.waitKey(1) & 0xFF == ord('q'):
@@ -145,24 +153,20 @@ def start():
     if hashCount <= 3:
         writeToFile("results.txt", "a", "\n" + "   Scanning Complete:"  + "\n" + "\n" + "   No Freeze Found! ")
         
-    webbrowser.open("results.txt")
-    sys.exit()
+    showResults()
 
 
-art.tprint("\nFreeze Detector")
+introMsg()
 
-print ("      Welcome to 'Freeze Detector' Developed Zakaria-097")
-print ("\n" + "      This application is a simple scanner to detect freezes in your video files.")
-
-def askUser():
+def promptUser():
 
     userInput = input("\n"  +  "      Enter 's' To Scan Your File: " )
 
     target = ["s", "S"]
 
     if (userInput in target):
-        start()
+        startProgam()
     else:
-        askUser()
+        promptUser()
 
-askUser()
+promptUser()
