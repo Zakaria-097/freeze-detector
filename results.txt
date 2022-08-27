@@ -1,4 +1,3 @@
 
-   Scanning Complete:
-
-   No Freeze Found! 
+   Freeze found!
+   Duplicate Hash:  0000000000000000      Time: 00:00:03
