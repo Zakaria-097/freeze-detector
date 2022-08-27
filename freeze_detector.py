@@ -107,19 +107,19 @@ def startProgam():
             # writing the extracted images
             cv2.imwrite(frame_name, frame)
              
-            #hashing each .openframe
-            zaks_Hash = imagehash.phash(Image.open(frame_name))
+            #hashing each .openframe. frame_hash is the hash value of current frame
+            frame_hash = imagehash.phash(Image.open(frame_name))
 
             # log the current frame
-            print("   Scanning ->" + str(zaks_Hash))
+            print("   Scanning ->" + str(frame_hash))
 
             # write the hashes
-            writeToFile("hashes.txt","a", "\n" + str(zaks_Hash))
+            writeToFile("hashes.txt","a", "\n" + str(frame_hash))
             
             sofn = frame_name.split('/')[2:]
 
             # write to timestamped_frames
-            writeToFile("timestamped_frames.txt","a", "\n" + current_time_of_video + " " +  str(sofn) + " = " + str(zaks_Hash))
+            writeToFile("timestamped_frames.txt","a", "\n" + current_time_of_video + " " +  str(sofn) + " = " + str(frame_hash))
 
             # update the counter / used for timestamped_frames.txt
             counter_id = counter_id + 3
@@ -144,7 +144,7 @@ def startProgam():
             # freezes found! 
             if hashCount == 4:
                 
-                writeToFile("results.txt", "a", "\n" + "   Freeze found!" + "\n\n""   Duplicate Hash:  " + str(hash) + "      Time: " + str(timeOfDup[0]))
+                writeToFile("results.txt", "a", "\n" + "   Freeze found!" + "\n\n""   Duplicate Hash:  " + str(frame_hash) + "      Time: " + str(timeOfDup[0]))
                 showResults()
  
             #break while scanning if user presses 'q'
