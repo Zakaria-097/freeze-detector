@@ -140,6 +140,7 @@ def startProgam():
                     hashCount +=1
                 else:
                     timeOfDup[:] = []
+                    hashCount = 1
 
             # freezes found! 
             if hashCount == 4:
