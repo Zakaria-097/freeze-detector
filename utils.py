@@ -5,12 +5,14 @@ import art
 import webbrowser
 
 FOLDER = 'frames'
+RESULTS = 'data/results.txt'
+T_FRAMES = "data/timestamped_frames.txt"
+HASHES = "data/hashes.txt"
 
 def introMsg():
     art.tprint("\nFreeze Detector")
     print ("      Welcome to 'Freeze Detector' Developed Zakaria-097")
     print ("\n" + "      This application is a simple scanner to detect freezes in your video files.")
-
 
 def generateFrameFolder():
     try:
@@ -23,7 +25,7 @@ def generateFrameFolder():
 
 def generateFiles():
     
-    files = ['results.txt', 'hashes.txt', 'timestamped_frames.txt']
+    files = [RESULTS, HASHES, T_FRAMES]
 
     for file in files:
         try:
@@ -54,5 +56,5 @@ def writeToFile(fileName, fileMode, message):
     file.close()
         
 def showResults():
-    webbrowser.open("results.txt")
+    webbrowser.open(RESULTS)
     sys.exit()
