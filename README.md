@@ -14,16 +14,12 @@ pip -V
 ### Install the dependencies by running the following;
 
 ```bash
-python3 -m pip install ImageHash && \
-python3 -m pip install art && \
-python3 -m pip install opencv_python  && \
-python3 -m pip install numpy && \
-python3 -m pip install Pillow
+make dependencies
 
 ```
 
 ### Run the program
 ```bash
-python3 freeze_detector.py
+make run
 
 ```
