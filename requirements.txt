@@ -139,7 +139,7 @@ ply==3.11
 proglog==0.1.10
 prometheus-client==0.15.0
 prompt-toolkit==3.0.33
-protobuf==3.20.1
+protobuf==3.20.2
 psutil==5.9.4
 psycopg2==2.9.3
 ptyprocess==0.7.0
