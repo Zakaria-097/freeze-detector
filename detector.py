@@ -23,6 +23,7 @@ def start():
     counter_id = 0
     hashCount = 1
     timeOfDup= [] # timeOfDup: used to list the exact times we've found duplicate hashes 
+    consecutiveThreshold = 4
     
     # allow user to select a video file
     selected_fileName = filedialog.askopenfilename( filetypes = ( ("Video Files", "*.mp4"), ("All Files", "*.*") ))
@@ -92,9 +93,9 @@ def start():
                 hashCount = 1
 
         # freezes found! 
-        if hashCount == 4:
+        if hashCount == consecutiveThreshold:
             
-            writeToFile(RESULTS, "a", "\n" + "   Freeze found!" + "\n\n""   Duplicate Hash:  " + str(frame_hash) + "      Time: " + str(timeOfDup[0]))
+            writeToFile(RESULTS, "a", "\n" + "   Freeze found!" + "\n\n""   Duplicate Hash:  " + frame_hash_str + "      Time: " + str(timeOfDup[0]))
             showResults()
 
         #break while scanning if user presses 'q'
@@ -116,8 +117,8 @@ def prompt():
     userInput = input("\n"  +  "      Enter 's' To Scan Your File: " )
 
     target = ["s", "S"]
-
-    if (userInput in target):
+    
+    if userInput in target:
         start()
     else:
         prompt()
