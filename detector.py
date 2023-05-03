@@ -64,7 +64,7 @@ def start():
         print("   Scanning -> " + frame_hash_str)
 
         # write the hashes
-        writeToFile(HASHES, "a", "\n" + str(frame_hash))
+        writeToFile(HASHES, "a", "\n" + frame_hash_str)
         
         sofn = str(frame_name.split('/')[2:])
 
